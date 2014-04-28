@@ -101,24 +101,31 @@ function inverseCumulative(pdf::GaussianPdf, probability::Number)
 
 function inverseCumulative(pdf::Pdf, probability::Number)
     # find x (or fx)for which F(x) = prob using bisection method
-    # Choose endpoints
     tol = 0.001
-    a = 0 #-100
-    b = 0 #100 
-    for cmp in pdf.components
-        a = min(a, inverseCumulative(cmp, tol))
-        b = max(b, inverseCumulative(cmp, 1-tol))
-        #println(a, " ", b)
-    end
-    # if probability < cumulative(pdf, a) || probability > cumulative(pdf, b)
-    #     do something
+    
+    # Choose endpoints
+    # # automatic ... 
+    # a = 0 #-100
+    # b = 0 #100 
+    # for cmp in pdf.components
+    #     a = min(a, inverseCumulative(cmp, tol))
+    #     b = max(b, inverseCumulative(cmp, 1-tol))
+    #     #println(a, " ", b)
     # end
-    err("Weird behaviour ... everything still ok when probability lies outside [a,b]")
-    dx = b - a
-    #println(a, " ", b)
-    a = a - dx
-    b = b + dx
-    debug("a = $a, b = $b")
+    # # if probability < cumulative(pdf, a) || probability > cumulative(pdf, b)
+    # #     do something
+    # # end
+    # err("Weird behaviour ... everything still ok when probability lies outside [a,b]")
+    # dx = b - a
+    # #println(a, " ", b)
+    # a = a - dx
+    # b = b + dx
+    # debug("a = $a, b = $b")
+    # Choose endpoints
+    # hardcoded
+    a = -100.0
+    b = 100.0
+
     #
     nmax = 1000
     n = 0
