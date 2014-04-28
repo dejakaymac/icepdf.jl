@@ -4,7 +4,7 @@ module pdf
 using PyPlot
 using Distributions
 using Logging
-export SimplePdf, GaussianPdf, BoundedGaussianPdf, Pdf, cumulative,
+export SimplePdf, GaussianPdf, BoundedGaussianPdf, Pdf, evaluate, cumulative,
 inverseCumulative
 
 abstract SimplePdf # must have: mu::Float64, sigma::Float64, weight::Float64
@@ -224,7 +224,7 @@ push!(p,p2)
 push!(p,p3)
 
 n = Pdf(p)
-x = [-10:0.5:10]
+x = [-10:0.05:10]
 fx = [evaluate(n,xi) for xi in x]
 Fx = [cumulative(n,xi) for xi in x]# prob
 #invFp = [inverseCumulative(n, Fxi) for Fxi in Fx]
