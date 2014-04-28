@@ -20,46 +20,42 @@ type IcePdf # move me to ice module
     hasRightTail::Bool
 end
 
-function normalise(icepdf::IcePdf)
-    #assertNonEmpty();
-    la=log(area(icepdf));
-    for (unsigned i=0;i<myLogarithmOfDensity.size();++i)
-        myLogarithmOfDensity[i]-=la;
+function normalise!(icepdf::IcePdf)
+    # #assertNonEmpty();
+    debug("icepdf.logarithmOfDensity", icepdf.logarithmOfDensity)
+    la = log(area(icepdf));
+    for i = [1:length(icepdf.logarithmOfDensity)] #(unsigned i=0;i<myLogarithmOfDensity.size();++i)
+        icepdf.logarithmOfDensity[i] -= la;
     end
+    debug("icepdf.logarithmOfDensity", icepdf.logarithmOfDensity)
 end
 
 function area(icepdf::IcePdf)
     #assertNonEmpty();
     r = 0.0;
     #alpha = 0.0;
-    for j = [1:1:length(curvatures)] # (unsigned j=0;j<myCurvatures.size();++j)
-        alpha = (myControlPoints[j+1]-myControlPoints[j])/2;
-        r += A(j)*alpha;
+    for j = [1:1:length(icepdf.curvatures)] # (unsigned j=0;j<myCurvatures.size();++j)
+        alpha = (icepdf.controlPoints[j+1] - icepdf.controlPoints[j])/2;
+        r += A(icepdf, j)*alpha;
     end
     return r;
 end
 
-
-
-    double IcePDF::A(const size_t i) const
-    {
-        assertNonEmpty();
-        double a=(myLogarithmOfDensity[i]+myLogarithmOfDensity[i+1])/2;
-        double b=(myLogarithmOfDensity[i+1]-myLogarithmOfDensity[i])/2;
-        if (i==0 and i==myCurvatures.size()-1 and myHasLeftTail and myHasRightTail)
-        {
-            return I(inf,a,b,myCurvatures[i])-I(-inf,a,b,myCurvatures[i]);
-        }
-        if (i==0 and myHasLeftTail)
-        {
-            return I(1,a,b,myCurvatures[i])-I(-inf,a,b,myCurvatures[i]);
-        }
-        if (i==myCurvatures.size()-1 and myHasRightTail)
-        {
-            return I(inf,a,b,myCurvatures[i])-I(-1,a,b,myCurvatures[i]);
-        }
-        return I(1,a,b,myCurvatures[i])-I(-1,a,b,myCurvatures[i]);
-    }
+function A(icepdf::IcePdf, i::Number)
+    # assertNonEmpty();
+    a = (icepdf.logarithmOfDensity[i] + icepdf.logarithmOfDensity[i+1])/2;
+    b = (icepdf.logarithmOfDensity[i+1] - icepdf.logarithmOfDensity[i])/2;
+    if (i==0 && i==length(icepdf.curvatures) && icepdf.HasLeftTail && icepdf.HasRightTail)
+        return I(Inf,a,b,icepdf.curvatures[i])-I(-Inf,a,b,icepdf.curvatures[i]);
+    end
+    if (i==0 && icepdf.hasLeftTail)
+        return I(1,a,b,icepdf.curvatures[i])-I(-Inf,a,b,icepdf.curvatures[i]);
+    end
+    if (i==length(icepdf.curvatures) && icepdf.hasRightTail)
+        return I(Inf,a,b,icepdf.curvatures[i])-I(-1,a,b,icepdf.curvatures[i]);
+    end
+    return I(1,a,b,icepdf.curvatures[i])-I(-1,a,b,icepdf.curvatures[i]);
+end
 
 
 
@@ -225,7 +221,7 @@ function fromPdfControlPoints(pdf::GaussianPdf,
                    hasRightTail);
         
 
-        # r.normalise();
+        r = normalise!(r);
 
         return r;
 
